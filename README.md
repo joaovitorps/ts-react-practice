@@ -21,7 +21,7 @@ _Goal: Allow users to interact with the platform and fetch real content._
 - [ ] State (useState): Managing changing data, like a "Dark Mode" toggle or a search bar input.
 - [ ] Effects (useEffect): Handling side effects, primarily fetching data from an API or JSON file when the component loads.
 - [ ] Event Handling: Capturing user actions like clicks, form submissions, or hover states.
-- [ ] React Router: Creating a multi-page experience (e.g., /home, /article/react-basics, /about) without reloading the browser.
+- [x] React Router: Creating a multi-page experience (e.g., /home, /article/react-basics, /about) without reloading the browser.
 
 ## 3. Advanced Concepts (Architecture & Scale)
 
