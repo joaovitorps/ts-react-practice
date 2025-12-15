@@ -6,8 +6,8 @@ export default function Home() {
       Content we have so far:
       <ul>
         <li>
-          <NavLink to="/app" end>
-            App
+          <NavLink to="/essentials" end>
+            Essentials
           </NavLink>
         </li>
       </ul>
