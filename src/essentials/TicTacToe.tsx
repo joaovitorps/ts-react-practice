@@ -13,7 +13,7 @@ function Square({ value, onSquareClick, highlight }: SquareProps) {
 
   return (
     <button
-      className={`w-10 h-10 ${highlight && highlightWinnerStyle}`}
+      className={`w-10 h-10 ${highlight ? highlightWinnerStyle : 'bg-white'}`}
       onClick={onSquareClick}
     >
       {value}
@@ -117,7 +117,7 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
     <>
       <div>{status}</div>
       <div className="flex justify-start items-start">
-        <div className="grid grid-cols-3 divide-x-2 divide-y-2 divide-indigo-500 text-center ">
+        <div className="grid grid-cols-3 gap-1 bg-indigo-500 text-center ">
           {squareList}
         </div>
       </div>
