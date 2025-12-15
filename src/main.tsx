@@ -5,7 +5,8 @@ import { RouterProvider } from "react-router/dom";
 
 import "./style.css";
 import Home from "./Home.tsx";
-import App from "./App.tsx";
+import Essentials from "./Essentials.tsx";
+import Board from "./essentials/TicTacToe.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,8 +14,14 @@ const router = createBrowserRouter([
     Component: Home,
   },
   {
-    path: "app",
-    Component: App,
+    path: "essentials",
+    children: [
+      { index: true, Component: Essentials },
+      {
+        path: "tik-tak-toe",
+        Component: Board,
+      },
+    ],
   },
 ]);
 
