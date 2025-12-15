@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from 'react';
 
-type Players = "X" | "O" | null;
+type Players = 'X' | 'O' | null;
 
 interface SquareProps {
   value: string | null;
   onSquareClick: () => void;
+  highlight: boolean;
+}
+
+function Square({ value, onSquareClick, highlight }: SquareProps) {
+  const highlightWinnerStyle = 'bg-green-400';
+
+  return (
+    <button
+      className={`w-10 h-10 ${highlight && highlightWinnerStyle}`}
+      onClick={onSquareClick}
+    >
+      {value}
+    </button>
+  );
 }
 
 interface BoardProps {
@@ -13,15 +27,9 @@ interface BoardProps {
   onPlay: (nextSquares: Array<Players>) => void;
 }
 
-function Square({ value, onSquareClick }: SquareProps) {
-  return (
-    <button className="w-10 h-10" onClick={onSquareClick}>
-      {value}
-    </button>
-  );
-}
-
 function Board({ xIsNext, squares, onPlay }: BoardProps) {
+  const [highlightWinnerSequence, setHighlightWinnerSequence] =
+    useState<boolean>(false);
   function handleClick(i: number) {
     if (squares[i] || calculateWinner(squares)) {
       return;
@@ -29,12 +37,17 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
 
     const nextSquares = squares.slice();
 
-    nextSquares[i] = xIsNext ? "X" : "O";
+    nextSquares[i] = xIsNext ? 'X' : 'O';
 
     onPlay(nextSquares);
   }
 
-  function calculateWinner(squares: Array<Players>): Players | null {
+  interface winnerReturn {
+    winner: Players;
+    sequence: Array<number>;
+  }
+
+  function calculateWinner(squares: Array<Players>): winnerReturn | null {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -52,32 +65,59 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
         squares[a] === squares[b] &&
         squares[a] === squares[c]
       ) {
-        return squares[a];
+        return {
+          winner: squares[a],
+          sequence: [a, b, c],
+        };
       }
     }
     return null;
   }
 
-  const winner = calculateWinner(squares);
+  const result = calculateWinner(squares);
 
   let status;
-  if (winner) {
-    status = `Winner is ${winner}`;
+  if (result) {
+    status = `Winner is ${result.winner}`;
   } else {
     const haveAnotherMove = squares.some((square) => square === null);
 
-    status = haveAnotherMove ? `Next player is ${xIsNext ? "X" : "O"}` : "Draw";
+    status = haveAnotherMove ? `Next player is ${xIsNext ? 'X' : 'O'}` : 'Draw';
   }
 
+  useEffect(() => {
+    if (result) {
+      const intervalId = setTimeout(() => {
+        setHighlightWinnerSequence((prevState) => {
+          const currentState = !prevState;
+          setHighlightWinnerSequence(currentState);
+
+          return currentState;
+        });
+      }, 200);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [result]);
+
   const squareList = squares.map((square, index) => {
-    return <Square value={square} onSquareClick={() => handleClick(index)} />;
+    return (
+      <Square
+        key={index}
+        value={square}
+        onSquareClick={() => handleClick(index)}
+        highlight={
+          result?.sequence.includes(index) ? highlightWinnerSequence : false
+        }
+      />
+    );
   });
 
   return (
     <>
       <div>{status}</div>
       <div className="flex justify-start items-start">
-        <div className="grid grid-cols-3 divide-x-2 divide-y-2 divide-indigo-500 text-center">
+        <div className="grid grid-cols-3 divide-x-2 divide-y-2 divide-indigo-500 text-center ">
           {squareList}
         </div>
       </div>
@@ -86,7 +126,7 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
 }
 
 export default function Game() {
-  type BoardState = "X" | "O" | null;
+  type BoardState = 'X' | 'O' | null;
   const [history, setHistory] = useState<Array<BoardState[]>>([
     Array(9).fill(null),
   ]);
@@ -105,8 +145,8 @@ export default function Game() {
   }
 
   const moves = history.map((_squares, move) => {
-    let description = "Go to ";
-    description += move > 0 ? `move #${move}` : "game start";
+    let description = 'Go to ';
+    description += move > 0 ? `move #${move}` : 'game start';
 
     return (
       <li key={move}>
